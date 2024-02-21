@@ -1,0 +1,6 @@
+@import-normalize; /* bring in normalize.css styles */
+
+body {
+  background: url(../public/photo.jpg) center / cover no-repeat;
+  max-height: 100%;
+}
