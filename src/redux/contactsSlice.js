@@ -1,25 +1,33 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+// Імпорт асинхронних Thunk-дій fetchContacts, addContacts, deleteContacts з файлу './operations'
+import { fetchContacts, addContacts, deleteContacts } from './operations';
 
-// Исходные контакты телефона
-const phoneContacts = {
-  items: [
-    { id: 'id-1', name: 'Timothée Chalamet', number: '459-12-56' },
-    { id: 'id-2', name: 'Zendaya', number: '443-89-12' },
-    { id: 'id-3', name: 'Rebecca Ferguson', number: '645-17-79' },
-    { id: 'id-4', name: 'Javier Bardem', number: '427-91-26' },
-  ],
-};
+// // Исходные контакты телефона
+// const phoneContacts = {
+//   items: [
+//     { id: 'id-1', name: 'Timothée Chalamet', number: '459-12-56' },
+//     { id: 'id-2', name: 'Zendaya', number: '443-89-12' },
+//     { id: 'id-3', name: 'Rebecca Ferguson', number: '645-17-79' },
+//     { id: 'id-4', name: 'Javier Bardem', number: '427-91-26' },
+//   ],
+// };
 
-// Создание slice контактов с использованием createSlice
+// Визначення функції getActions, яка повертає умову isAnyOf для зазначеного типу дії
+const getActions = type =>
+  isAnyOf(fetchContacts[type], addContacts[type], deleteContacts[type]);
+
+// Початковий стан для slice contactsSlice
+const initialState = { items: [], isLoading: false, error: null };
+
+// Створення slice для керування контактами
 const contactsSlice = createSlice({
-  name: 'contacts', // Имя slice контактов
-  initialState: phoneContacts, // Начальное состояние контактов
-  reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.items.push(action.payload); // Добавление нового контакта в список контактов
+  name: 'contacts', // ім'я для slice
+  initialState, // Початковий стан контактів
+  extraReducers: builder =>
+    builder
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        // Обробка успішного виконання fetchContacts
+        state.items = action.payload; // Оновлення списку контактів у стані
       },
     },
     prepare(newContact) {

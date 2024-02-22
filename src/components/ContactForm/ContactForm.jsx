@@ -5,7 +5,7 @@ import { ReactComponent as AddIcon } from '../icons/add.svg';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { getVisibleContacts } from '../../redux/selectors';
-import { addContact } from '../../redux/contactsSlice';
+import { addContacts } from '../../redux/operations';
 
 // Генерація унікальних ідентифікаторів для полів форми
 const nameInputId = nanoid();
@@ -33,7 +33,7 @@ const ContactForm = () => {
     }
 
     //Виклик функції onSubmit із батьківського компонента з передачею об'єкта контакта
-    dispatch(addContact({ name, number }));
+    dispatch(addContacts({ name, number }));
     setName('');
     setNumber('');
   };
