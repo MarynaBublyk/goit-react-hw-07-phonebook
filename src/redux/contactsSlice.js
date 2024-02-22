@@ -28,27 +28,37 @@ const contactsSlice = createSlice({
       .addCase(fetchContacts.fulfilled, (state, action) => {
         // Обробка успішного виконання fetchContacts
         state.items = action.payload; // Оновлення списку контактів у стані
-      },
-    },
-    prepare(newContact) {
-      return {
-        payload: { id: nanoid(), ...newContact }, // Подготовка данных для добавления контакта с уникальным идентификатором
-      };
-    },
-    removeContact(state, action) {
-      const index = state.items.findIndex(
-        contact => contact.id !== action.payload
-      );
-      state.items.splice(index, 1); // Удаление контакта из списка контактов
-    },
-  },
+      })
+      .addCase(addContacts.fulfilled, (state, action) => {
+        // Обробка успішного виконання addContacts
+        state.items.unshift(action.payload); // Додавання нового контакту на початок списку контактів може
+      })
+      .addCase(deleteContacts.fulfilled, (state, action) => {
+        // Обробка успішного виконання deleteContacts
+        const index = state.items.findIndex(
+          contact => contact.id === action.payload.id
+        );
+        state.items.splice(index, 1); // Видалення контакту зі списку
+      })
+
+      .addMatcher(getActions('pending'), state => {
+        // Обробка дій зі статусом 'pending' очікування
+        state.isLoading = true; // Установка прапора isLoading true
+      })
+      .addMatcher(getActions('rejected'), (state, action) => {
+        // Обробка дій зі статусом 'rejected' відхилено
+        state.isLoading = false; // Скидання прапора isLoading false
+        state.error = action.payload; // Встановлення повідомлення про помилку
+      })
+      .addMatcher(getActions('fulfilled'), state => {
+        // Обробка дій зі статусом 'fulfilled' виконано
+        state.isLoading = false; // Скидання прапора isLoading false
+        state.error = null; // Скидання повідомлення про помилку null
+      }),
 });
 
-// Экспорт действий addContact и removeContact из slice контактов
-export const { addContact, removeContact } = contactsSlice.actions;
+// Експорт дій addContact и deleteContact зі slice контактов
+export const { addContact, deleteContact } = contactsSlice.actions;
 
-// Создание персистентного редьюсера для сохранения состояния контактов с использованием redux-persist
-export const contactsReducer = persistReducer(
-  { key: 'contacts', storage },
-  contactsSlice.reducer
-);
+// Експорт редуктора (reducer) contactsReducer з slice contactsSlice
+export const contactsReducer = contactsSlice.reducer;

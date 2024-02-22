@@ -1,14 +1,25 @@
-export const getContacts = state => state.contacts.items; // Возвращает список контактов из состояния
+import { createSelector } from '@reduxjs/toolkit';
 
-export const getFilter = state => state.filter; // Возвращает текущий фильтр из состояния
+// Функція selectIsLoading приймає об'єкт стану state і повертає значення властивості isLoading з об'єкта стану contacts.
+export const selectIsLoading = state => state.contacts.isLoading;
 
-export const getVisibleContacts = state => {
-  const contacts = getContacts(state); // Получает список контактов
-  const filter = getFilter(state); // Получает текущий фильтр
-  const normalizedFilter = filter.toLowerCase(); // Преобразует фильтр в нижний регистр
+// Функція selectError приймає об'єкт стану state і повертає значення якості error з об'єкта стану contacts.
+export const selectError = state => state.contacts.error;
 
-  // Фильтрует контакты, чтобы возвращать только те, чьи имена содержат подстроку фильтра (в нижнем регистре)
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizedFilter)
-  );
-};
+// Функція selectContacts приймає об'єкт стану state і повертає значення властивості items з об'єкта стану contacts.
+export const selectContacts = state => state.contacts.items; // Возвращает список контактов из состояния
+
+// Функція selectFilter приймає об'єкт стану state та повертає значення властивості filter з об'єкта стану.
+export const selectFilter = state => state.filter;
+
+// Функція selectVisibleContacts використовує функцію createSelector для створення селектора, який залежить від двох інших селекторів: selectContacts і selectFilter.
+// Селектор selectVisibleContacts повертає відфільтрований масив контактів, де ім'я контакту contact.name містить рядок фільтра filter.
+export const selectVisibleContacts = createSelector(
+  [selectContacts, selectFilter],
+  (contacts, filter) => {
+    // Фильтрует контакты, чтобы возвращать только те, чьи имена содержат подстроку фильтра (в нижнем регистре)
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
+    );
+  }
+);

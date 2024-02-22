@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {
-  persistStore,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -11,14 +10,14 @@ import {
 import { contactsReducer } from './contactsSlice';
 import { filterReducer } from './filterSlice';
 
-// Создание хранилища Redux с помощью configureStore
+// Створення сховища Redux за допомогою configureStore
 export const store = configureStore({
   reducer: {
-    contacts: contactsReducer, // Редюсер для управления состоянием контактов
-    filter: filterReducer, // Редюсер для управления состоянием фильтра
+    contacts: contactsReducer, // Редюсер для керування станом контактів
+    filter: filterReducer, // Редюсер для керування станом фільтра
   },
 
-  // Применение middleware с помощью getDefaultMiddleware
+  // Застосування middleware за допомогою getDefaultMiddleware
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -26,6 +25,3 @@ export const store = configureStore({
       },
     }),
 });
-
-// Создание персистентного хранилища, которое сохраняет состояние хранилища Redux при перезагрузке страницы
-export const persistor = persistStore(store);
